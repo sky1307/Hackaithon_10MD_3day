@@ -1,7 +1,3 @@
-jupyterlab
-python-binance
-matplotlib
-pandas
 pyyaml==5.4.1
 scikit-learn
 matplotlib

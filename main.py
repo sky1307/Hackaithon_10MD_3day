@@ -85,26 +85,31 @@ def sigma_init(sigma_input):
 
 
 if __name__ == '__main__':
-    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
-    q = get_list_sigma_result()
+    # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+    # q = get_list_sigma_result()
     
-    sigma = sigma_init(q)
+    # sigma = sigma_init(q)
     
-    print("((((((((((((((((((   q   )))))))))))))))))))")
-    print(q)
-    print("(((((((((((((((((( sigma )))))))))))))))))))")
-    print(sigma)
+    # print("((((((((((((((((((   q   )))))))))))))))))))")
+    # print(q)
+    # print("(((((((((((((((((( sigma )))))))))))))))))))")
+    # print(sigma)
     
-    pop = GA(sigma, fitness)
-    pop.run()
-
-    # gene = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    # n = 2
-    # sigma_index_lst = []
-    # for i in range(len(gene)):
-    #     if gene[i] == 1:
-    #         sigma_index_lst.append(i)
-    # fitnesss = reward_func(sigma_index_lst=sigma_index_lst, default_n=20,
-    #                        epoch_num=n, epoch_min=100, epoch_step=50)[0]
-    # print(fitness)
+    # pop = GA(sigma, fitness)
+    # pop.run()
+    # 1 1 0 0 0 0 1 0 0 0 1 1 0 1 1 0 1 0 1 0 
+    
+    # gene = [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0 ]
+    gene = [1,1]
+    n = 2
+    sigma_index_lst = []
+    for i in range(len(gene)):
+        if gene[i] == 1:
+            sigma_index_lst.append(i)
+    l = []
+    for i in range(3):
+        fitnesss = reward_func(sigma_index_lst=sigma_index_lst, default_n=20,
+                            epoch_num=n, epoch_min=100, epoch_step=50)[0]
+        l.append(fitnesss)
+    print('-------------------------------------------------------------------',l)
 # test2
