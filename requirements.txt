@@ -1,3 +1,12 @@
 jupyterlab
 python-binance
 matplotlib
+pandas
+pyyaml
+scikit-learn
+matplotlib
+keras
+tensorflow
+pandas
+matplotlib
+numpy
