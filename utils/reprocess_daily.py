@@ -41,6 +41,8 @@ def extract_data(dataframe, window_size=5, target_timstep=1, cols_x=[], cols_y=[
     ys = [] # return output data
     ygt = [] # return groundtruth data
 
+    x_end = []
+
     if target_timstep != 1:
         for i in range(dataframe.shape[0] - window_size - target_timstep):
             xs.append(dataframe[i:i + window_size, cols_x])
@@ -53,7 +55,8 @@ def extract_data(dataframe, window_size=5, target_timstep=1, cols_x=[], cols_y=[
             xs.append(dataframe[i:i + window_size, cols_x])
             ys.append(dataframe[i + window_size:i + window_size + target_timstep, cols_y].reshape(len(cols_y)))
             ygt.append(dataframe[i + window_size:i + window_size + target_timstep, cols_gt].reshape(len(cols_gt)))
-    return np.array(xs), np.array(ys), scaler, np.array(ygt)
+            x_end.append(dataframe[-window_size:, cols_x])
+    return np.array(xs), np.array(ys), scaler, np.array(ygt), np.array(x_end)
 
 
 def ed_extract_data(dataframe, window_size=5, target_timstep=1, cols_x=[], cols_y=[], mode='std'):

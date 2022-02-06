@@ -38,6 +38,6 @@ def get_input_data(input_file, default_n, sigma_lst):
 
 
 if __name__ == "__main__":
-    res = get_input_data('../data/SonTay.csv', 20, [1, 2, 3])
-    res.to_csv('../data/modified_data.csv', index=False)
+    res = get_input_data('../data/SonTay.csv', 20, [0, 1])
+    res.to_csv('../data/modified_data1.csv', index=False)
     print(res.head())

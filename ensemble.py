@@ -97,7 +97,7 @@ class Ensemble:
         #train_outer = dat.shape[0] - train_inner - test_outer
 
         if self.model_kind == 'rnn_cnn':
-            x, y, scaler, y_gt = extract_data(dataframe=dat,
+            x, y, scaler, y_gt, x_end = extract_data(dataframe=dat,
                                               window_size=self.window_size,
                                               target_timstep=self.target_timestep,
                                               cols_x=self.cols_x,
@@ -105,7 +105,7 @@ class Ensemble:
                                               cols_gt=self.cols_gt,
                                               mode=self.norm_method)
             if true_t_timestep != 1:
-                _, y_true, _, y_gt = extract_data(dataframe=dat,
+                _, y_true, _, y_gt, _ = extract_data(dataframe=dat,
                                                   window_size=self.window_size,
                                                   target_timstep=true_t_timestep,
                                                   cols_x=self.cols_x,
@@ -122,11 +122,12 @@ class Ensemble:
 
             for cat in ["train_in", "test_in", "test_out"]:
                 x, y, y_gt = locals()["x_" + cat], locals()["y_" + cat], locals()["y_gt_" + cat]
-                print(cat, "x: ", x.shape, "y: ", y.shape)
+                # print(cat, "x: ", x.shape, "y: ", y.shape)
                 data["x_" + cat] = x
                 data["y_" + cat] = y
                 data["y_gt_" + cat] = y_gt
-
+            data['x_end']= x_end
+            # print('x_end',x_end.shape)
         elif self.model_kind == 'en_de':
             en_x, de_x, de_y, scaler = ed_extract_data(dataframe=dat,
                                                        window_size=self.window_size,
@@ -367,6 +368,40 @@ class Ensemble:
 
         plt.savefig(self.log_dir + 'predict.png')
         return results
+
+    
+    
+    def normalize_data(self, x_, maxx, minn):
+        x_[:,:,0] = (x_[:,:,0] -minn[0])/(maxx[0]-minn[0])
+        x_[:,:,1] = (x_[:,:,1] -minn[1])/(maxx[1]-minn[1])
+        return x_
+
+    def reverse_data(self, result, maxx, minn):
+        q_pred = result[0] * (maxx[0]-minn[0]) + minn[0]
+        h_pred = result[1] * (maxx[1]-minn[1]) + minn[1]
+        return q_pred, h_pred
+
+    def prediction_vp(self, x_= None):
+        # x = x_.copy()
+        maxx, minn = self.data['scaler'].data_max_[2:], self.data['scaler'].data_min_[2:] 
+        # print(maxx, minn)
+        # x = self.normalize_data(x, maxx, minn)
+        # for i in range(20):
+        x = self.data['x_end'][0]
+        # x = x_[0]
+        res0_sub = self.predict_in(data=x[np.newaxis, :])
+        res0 = self.outer_model.predict(x=[res0_sub[np.newaxis, :], x[np.newaxis, :]], batch_size=1)
+        x = x.tolist()
+        result = res0.reshape(self.output_dim).tolist()
+        
+        q_pred, h_pred = self.reverse_data(result, maxx, minn)
+        print(q_pred, h_pred)
+        y_pred = [q_pred, h_pred]
+        return y_pred
+        # return self.reverse_data(result, maxx, minn)
+
+   
+
 
     def roll_prediction(self):
         result = []
