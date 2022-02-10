@@ -55,8 +55,15 @@ def extract_data(dataframe, window_size=5, target_timstep=1, cols_x=[], cols_y=[
             xs.append(dataframe[i:i + window_size, cols_x])
             ys.append(dataframe[i + window_size:i + window_size + target_timstep, cols_y].reshape(len(cols_y)))
             ygt.append(dataframe[i + window_size:i + window_size + target_timstep, cols_gt].reshape(len(cols_gt)))
-            x_end.append(dataframe[-window_size:, cols_x])
+    x_end.append(dataframe[-window_size:, cols_x])
     return np.array(xs), np.array(ys), scaler, np.array(ygt), np.array(x_end)
+
+def extract_data_vp(dataframe, window_size=5, target_timstep=1, cols_x=[], cols_y=[], cols_gt=[],mode='std'):
+    dataframe, scaler = normalize_data(dataframe, mode)
+    x_end = []
+    x_end.append(dataframe[-window_size:, cols_x])
+    return np.array(x_end), scaler
+
 
 
 def ed_extract_data(dataframe, window_size=5, target_timstep=1, cols_x=[], cols_y=[], mode='std'):

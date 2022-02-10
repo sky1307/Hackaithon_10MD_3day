@@ -101,13 +101,13 @@ if __name__ == '__main__':
     
     # gene = [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0 ]
     gene = [1,1]
-    n = 8
+    n = 2
     sigma_index_lst = []
     for i in range(len(gene)):
         if gene[i] == 1:
             sigma_index_lst.append(i)
     l = []
-    for i in range(2):
+    for i in range(1):
         fitnesss = reward_func(sigma_index_lst=sigma_index_lst, default_n=20,
                             epoch_num=n, epoch_min=100, epoch_step=50)[0]
         l.append(fitnesss)

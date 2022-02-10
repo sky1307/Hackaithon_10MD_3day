@@ -10,8 +10,8 @@ import argparse
 import yaml
 import tensorflow.keras.backend as K
 from utils.ssa import SSA
-from utils.reprocess_daily import extract_data, ed_extract_data, roll_data
-from utils.data_loader import get_input_data
+from utils.reprocess_daily import extract_data, ed_extract_data, roll_data, extract_data_vp
+from utils.data_loader import get_input_data, get_input_data_vp
 from utils.epoch_size_tuning import get_epoch_size_list
 
 
@@ -154,7 +154,22 @@ class Ensemble:
 
         data['scaler'] = scaler
         return data
-
+    def generate_data_vp(self, true_t_timestep=1, data_= None):
+        dat = get_input_data_vp(data_, self.default_n, self.sigma_lst)
+        dat = dat.to_numpy()
+        data = {}
+        data['shape'] = dat.shape
+        if self.model_kind == 'rnn_cnn':
+            x_end, scaler = extract_data_vp(dataframe=dat,
+                                              window_size=self.window_size,
+                                              target_timstep=self.target_timestep,
+                                              cols_x=self.cols_x,
+                                              cols_y=self.cols_y,
+                                              cols_gt=self.cols_gt,
+                                              mode=self.norm_method)
+        data['x_end']= x_end
+        data['scaler'] = scaler
+        return data
     def build_model_inner(self):
         if self.model_kind == 'rnn_cnn':
             from model.models.multi_rnn_cnn import model_builder
@@ -395,7 +410,7 @@ class Ensemble:
         result = res0.reshape(self.output_dim).tolist()
         
         q_pred, h_pred = self.reverse_data(result, maxx, minn)
-        print(q_pred, h_pred)
+        # print(q_pred, h_pred)
         y_pred = [q_pred, h_pred]
         return y_pred
         # return self.reverse_data(result, maxx, minn)
