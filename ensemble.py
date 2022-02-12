@@ -11,7 +11,7 @@ import yaml
 import tensorflow.keras.backend as K
 from utils.ssa import SSA
 from utils.reprocess_daily import extract_data, ed_extract_data, roll_data, extract_data_vp
-from utils.data_loader import get_input_data, get_input_data_vp
+from utils.data_loader import get_input_data
 from utils.epoch_size_tuning import get_epoch_size_list
 
 
@@ -154,8 +154,8 @@ class Ensemble:
 
         data['scaler'] = scaler
         return data
-    def generate_data_vp(self, true_t_timestep=1, data_= None):
-        dat = get_input_data_vp(data_, self.default_n, self.sigma_lst)
+    def generate_data_vp(self, true_t_timestep=1):
+        dat = get_input_data(self.data_file,self.default_n, self.sigma_lst)
         dat = dat.to_numpy()
         data = {}
         data['shape'] = dat.shape
